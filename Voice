@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Modificateur de voix</title>
+</head>
+<body>
+  <h1>Test Voice Changer</h1>
+  <button id="startBtn">Démarrer</button>
+  <script>
+    let audioContext;
+    let source;
+    let effectNode;
+    let isRunning = false;
+
+    document.getElementById('startBtn').addEventListener('click', async () => {
+      if (isRunning) return;
+      isRunning = true;
+
+      try {
+        // 1) Demande l'accès au micro
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        // 2) Crée un AudioContext
+        audioContext = new AudioContext();
+
+        // 3) Transforme le flux en "source" audio
+        source = audioContext.createMediaStreamSource(stream);
+
+        // 4) Crée un effet bidon (par ex. un filtre "biquad" ou gain)
+        //    Pour un vrai pitch shift, voir plus bas
+        effectNode = audioContext.createBiquadFilter();
+        effectNode.type = "lowpass";     // Filtre passe-bas
+        effectNode.frequency.value = 1000; // Fréquence de coupure
+
+        // 5) Connecte le micro -> effet -> enceintes
+        source.connect(effectNode);
+        effectNode.connect(audioContext.destination);
+
+        console.log("Voice mod started");
+      } catch (err) {
+        console.error("Erreur d'accès au micro:", err);
+      }
+    });
+  </script>
+</body>
+</html>
