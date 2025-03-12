@@ -1,47 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Modificateur de voix</title>
+  <meta charset="UTF-8" />
+  <title>Voice Pitch Shifter Example</title>
 </head>
 <body>
-  <h1>Test Voice Changer</h1>
+  <h1>Test Voice Pitch Shifter</h1>
+
+  <!-- Contrôles de pitch -->
   <button id="startBtn">Démarrer</button>
-  <script>
+  <button id="stopBtn">Stop</button>
+  <p>
+    <label for="pitchRange">Coefficient de pitch :</label>
+    <input type="range" id="pitchRange" min="0.5" max="2" step="0.01" value="1">
+    <span id="pitchValue">1</span>
+  </p>
+
+  <script type="module">
+    // Ici on importe la librairie pitchshift.js (hypothétique)
+    // Il faut l'avoir dans ton projet OU sur un CDN
+    import Pitchshift from './pitchshift.js'; 
+    // ou ex: import Pitchshift from 'https://cdn.../pitchshift.js';
+
     let audioContext;
-    let source;
-    let effectNode;
+    let streamSource;
+    let pitchShiftNode;
     let isRunning = false;
 
-    document.getElementById('startBtn').addEventListener('click', async () => {
-      if (isRunning) return;
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn  = document.getElementById('stopBtn');
+    const pitchRange = document.getElementById('pitchRange');
+    const pitchValue = document.getElementById('pitchValue');
+
+    // Démarre le pitch shift
+    startBtn.onclick = async () => {
+      if (isRunning) return; // déjà en cours
       isRunning = true;
 
       try {
-        // 1) Demande l'accès au micro
+        // 1) Demande l’accès au micro
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        
-        // 2) Crée un AudioContext
+
+        // 2) Crée l’audio context
         audioContext = new AudioContext();
 
-        // 3) Transforme le flux en "source" audio
-        source = audioContext.createMediaStreamSource(stream);
+        // 3) Transforme le flux micro en source Web Audio
+        streamSource = audioContext.createMediaStreamSource(stream);
 
-        // 4) Crée un effet bidon (par ex. un filtre "biquad" ou gain)
-        //    Pour un vrai pitch shift, voir plus bas
-        effectNode = audioContext.createBiquadFilter();
-        effectNode.type = "lowpass";     // Filtre passe-bas
-        effectNode.frequency.value = 1000; // Fréquence de coupure
+        // 4) Crée le nœud de pitch shift
+        pitchShiftNode = new Pitchshift(audioContext);
+        // Quelques libs utilisent plutôt : new PitchShift(audioContext, options) etc.
+        // Ajuste selon la lib que tu utilises.
 
-        // 5) Connecte le micro -> effet -> enceintes
-        source.connect(effectNode);
-        effectNode.connect(audioContext.destination);
+        // Ex : paramètre "wet" (mix) et "pitch"
+        pitchShiftNode.wet.value = 1; // 1 => son entièrement pitché
+        pitchShiftNode.pitch.value = parseFloat(pitchRange.value); // ex: 1 = normal, 2 = double
 
-        console.log("Voice mod started");
+        // 5) Connecte le micro -> pitchShift -> sortie
+        streamSource.connect(pitchShiftNode.input);
+        pitchShiftNode.connect(audioContext.destination);
+
+        console.log("Pitch shifting activé");
       } catch (err) {
         console.error("Erreur d'accès au micro:", err);
+        isRunning = false;
       }
-    });
+    };
+
+    // Modifie la valeur du pitch en direct quand on bouge le slider
+    pitchRange.oninput = () => {
+      const val = parseFloat(pitchRange.value);
+      pitchValue.textContent = val.toFixed(2);
+
+      if (pitchShiftNode) {
+        pitchShiftNode.pitch.value = val;
+      }
+    };
+
+    // Stoppe le traitement (débranche tout, ferme l’audio context)
+    stopBtn.onclick = () => {
+      if (!isRunning) return;
+      isRunning = false;
+
+      // Déconnecter les noeuds
+      if (streamSource) streamSource.disconnect();
+      if (pitchShiftNode) pitchShiftNode.disconnect();
+
+      if (audioContext) {
+        audioContext.close();
+        audioContext = null;
+      }
+      console.log("Pitch shifting stoppé");
+    };
   </script>
 </body>
 </html>
