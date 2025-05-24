@@ -143,8 +143,16 @@
     <div style="color:#AAA;">Passagers : 9</div>
   </div>
 
- <div style="display:flex;justify-content:space-between;align-items:center;margin-top:25px;">
-  
+ <div style="display:flex;justify-content:space-between;align-items:center;margin-top:25px;gap:15px;">
+
+  <!-- Saisie numéro de téléphone -->
+  <div style="display:flex;align-items:center;gap:8px;">
+    <label for="telephone" style="color:#FFF;font-size:14px;">Téléphone :</label>
+    <input type="tel" id="telephone" placeholder="Numéro de téléphone" 
+           style="background:#262626;color:#FFF;padding:10px 15px;border:none;border-radius:8px;width:180px;">
+  </div>
+
+  <!-- Nombre de personnes -->
   <div style="display:flex;align-items:center;font-size:16px;gap:8px;">
     <!-- Icône SVG -->
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="#FFF">
@@ -155,6 +163,7 @@
     <button id="btn-plus" style="margin:0 10px;width:30px;height:30px;border-radius:50%;border:none;background:#262626;color:#FFF;">+</button>
   </div>
 
+  <!-- Prix estimé et boutons -->
   <div style="display:flex;align-items:center;gap:10px;">
     <div id="prixEstime" style="color:#FFF;font-weight:bold;background-color:#262626;padding:10px 15px;border-radius:6px;display:none;"></div>
     <button id="estimate-btn" style="background-color:#444;color:#FFF;border:none;padding:12px 20px;border-radius:6px;">ESTIMER LE PRIX</button>
@@ -162,6 +171,7 @@
   </div>
 
 </div>
+
 
 
 <script>
