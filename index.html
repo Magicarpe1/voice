@@ -66,18 +66,12 @@
       fill: currentColor;
     }
     .preset-btn {
-      display:flex;
-      align-items:center;
-      gap:8px;
-      border-radius:8px;
-      border:1px solid rgba(255,255,255,0.1);
-      background-color:#262626;
-      color:#FFF;
-      padding:8px 12px;
-      cursor:pointer;
-      transition:background 0.3s;
+      flex: 1;
+      font-size: 12px;
+      padding: 6px;
+      text-align: center;
     }
-    
+
     .preset-btn:hover {
       background-color:#333;
     }
@@ -92,20 +86,20 @@
     <h2 style="font-size:22px;">Réservation Express</h2>
   </div>
 
-<div style="display:flex;gap:10px;margin-bottom:20px;">
-  <button class="preset-btn" data-adresse="Gare du Nord, Paris">Gare du Nord</button>
-  <button class="preset-btn" data-adresse="Gare Montparnasse, Paris">Gare Montparnasse</button>
-  <button class="preset-btn" data-adresse="Gare de Lyon, Paris">Gare de Lyon</button>
-  <button class="preset-btn" data-adresse="Aéroport Charles de Gaulle (CDG)">Aéroport CDG</button>
-  <button class="preset-btn" data-adresse="Aéroport Paris-Orly">Aéroport Orly</button>
-</div>
-
   <div style="display:flex;gap:30px;">
     <div style="flex:1;">
       <label class="label-with-icon">
         Lieu de départ
       </label>
       <input id="autocomplete_depart" placeholder="Entrez votre lieu de départ" type="text">
+
+<div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;">
+  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="18 Rue de Dunkerque, 75010 Paris">Gare du Nord</button>
+  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="17 Boulevard de Vaugirard, 75015 Paris">Montparnasse</button>
+  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Place Louis-Armand, 75012 Paris">Gare de Lyon</button>
+  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Aéroport Charles de Gaulle, Roissy-en-France">CDG</button>
+  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Aéroport d'Orly, 94390 Orly">Orly</button>
+</div>
 
       <label style="display:block;margin-top:20px;">
         Date
@@ -118,6 +112,15 @@
         Destination
       </label>
       <input id="autocomplete_destination" placeholder="Entrez votre destination" type="text">
+
+<div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;">
+  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="18 Rue de Dunkerque, 75010 Paris">Gare du Nord</button>
+  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="17 Boulevard de Vaugirard, 75015 Paris">Montparnasse</button>
+  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Place Louis-Armand, 75012 Paris">Gare de Lyon</button>
+  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Aéroport Charles de Gaulle, Roissy-en-France">CDG</button>
+  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Aéroport d'Orly, 94390 Orly">Orly</button>
+</div>
+
 
       <label style="display:block;margin-top:20px;" class="label-with-icon">
         Heure
@@ -203,15 +206,17 @@
     initAutocomplete();
     document.getElementById('estimate-btn').addEventListener('click', estimerPrix);
 
-    // Ajout des boutons pré-remplis
+    // Ajout des boutons pré-remplis avec sélection dynamique du champ
     document.querySelectorAll('.preset-btn').forEach(btn => {
       btn.addEventListener('click', (event) => {
         const adresse = event.currentTarget.getAttribute('data-adresse');
-        document.getElementById('autocomplete_destination').value = adresse;
+        const inputId = event.currentTarget.getAttribute('data-input');
+        document.getElementById(inputId).value = adresse;
       });
     });
   });
 </script>
+
 
 </body>
 </html>
