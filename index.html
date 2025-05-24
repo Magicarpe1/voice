@@ -1,97 +1,169 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Voice Pitch Shifter Example</title>
+  <meta charset="UTF-8">
+  <title>Réservation Express</title>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcL0S_zj3w-AqPnRYEGjMiT2P1UutX3LE&libraries=places"></script>
+
+  <style>
+    body {
+      background: #121212;
+      font-family: sans-serif;
+      color: #FFF;
+      padding: 20px;
+    }
+
+    .pac-container {
+      background-color: #262626 !important;
+      color: #CCC !important;
+      border-radius: 8px;
+      border: 1px solid #333;
+      font-family: sans-serif;
+    }
+
+    .pac-item {
+      color: #CCC !important;
+      padding: 8px 12px;
+    }
+
+    .pac-item:hover {
+      background-color: #333 !important;
+    }
+
+    .pac-icon {
+      filter: invert(100%) brightness(80%);
+    }
+
+    input[type="date"], 
+    input[type="time"],
+    input[type="text"] {
+      color-scheme: dark;
+      background:#262626;
+      color:#FFF;
+      width:100%;
+      margin-top:8px;
+      padding:10px 15px;
+      border-radius:8px;
+      border:none;
+      box-sizing:border-box;
+    }
+
+    ::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+    }
+
+    .label-with-icon {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .icon-svg {
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+      fill: currentColor;
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Test Voice Pitch Shifter</h1>
 
-  <!-- Contrôles de pitch -->
-  <button id="startBtn">Démarrer</button>
-  <button id="stopBtn">Stop</button>
-  <p>
-    <label for="pitchRange">Coefficient de pitch :</label>
-    <input type="range" id="pitchRange" min="0.5" max="2" step="0.01" value="1">
-    <span id="pitchValue">1</span>
-  </p>
+<div style="background:#1A1A1A;border-radius:12px;padding:30px;max-width:1100px;margin:auto;box-sizing:border-box;">
+  <div style="margin-bottom:20px;">
+    <h2 style="font-size:22px;">Réservation Express</h2>
+  </div>
 
-  <script type="module">
-    // Ici on importe la librairie pitchshift.js (hypothétique)
-    // Il faut l'avoir dans ton projet OU sur un CDN
-    import Pitchshift from './pitchshift.js'; 
-    // ou ex: import Pitchshift from 'https://cdn.../pitchshift.js';
+  <div style="display:flex;gap:30px;">
+    <div style="flex:1;">
+      <label class="label-with-icon">
+        Lieu de départ
+      </label>
+      <input id="autocomplete_depart" placeholder="Entrez votre lieu de départ" type="text">
 
-    let audioContext;
-    let streamSource;
-    let pitchShiftNode;
-    let isRunning = false;
+      <label style="display:block;margin-top:20px;">
+        Date
+      </label>
+      <input type="date" placeholder="Date">
+    </div>
 
-    const startBtn = document.getElementById('startBtn');
-    const stopBtn  = document.getElementById('stopBtn');
-    const pitchRange = document.getElementById('pitchRange');
-    const pitchValue = document.getElementById('pitchValue');
+    <div style="flex:1;">
+      <label class="label-with-icon">
+        Destination
+      </label>
+      <input id="autocomplete_destination" placeholder="Entrez votre destination" type="text">
 
-    // Démarre le pitch shift
-    startBtn.onclick = async () => {
-      if (isRunning) return; // déjà en cours
-      isRunning = true;
+      <label style="display:block;margin-top:20px;" class="label-with-icon">
+        Heure
+      </label>
+      <input type="time" placeholder="Heure">
+    </div>
+  </div>
 
-      try {
-        // 1) Demande l’accès au micro
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  <div style="background-color:#262626;border-radius:12px;padding:25px;text-align:center;margin-top:25px;">
+    <img src="https://ik.imagekit.io/lakolo/eyJidWNrZXQiOiJkYXRhay1jZG4teHkiLCJlZGl0cyI6e30sImtleSI6ImNvbmZpZ3VyYXRvci1pbWdzL2NhcnMvZnIvODAwL1RPWU9UQS9QUk9BQ0UtVkVSU08tRUxFQ1RSSUMvNDg3NThfTU9OT1NQQUNFLTUtUE9SVEVTL25vaXItcGVybGEtbmVyYS1tZXRhbGxpc2UucG5nIn0=.png?updatedAt=1746260324316"
+      alt="Voiture sélectionnée" style="width:250px;margin:auto;">
 
-        // 2) Crée l’audio context
-        audioContext = new AudioContext();
+    <h3 style="margin-top:15px;">TOYOTA PROACE</h3>
+    <div style="color:#AAA;">Passagers : 9</div>
+  </div>
 
-        // 3) Transforme le flux micro en source Web Audio
-        streamSource = audioContext.createMediaStreamSource(stream);
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:25px;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button style="width:30px;height:30px;border-radius:50%;border:none;background:#262626;color:#FFF;">–</button>
+      <span>1</span>
+      <button style="width:30px;height:30px;border-radius:50%;border:none;background:#262626;color:#FFF;">+</button>
+    </div>
 
-        // 4) Crée le nœud de pitch shift
-        pitchShiftNode = new Pitchshift(audioContext);
-        // Quelques libs utilisent plutôt : new PitchShift(audioContext, options) etc.
-        // Ajuste selon la lib que tu utilises.
+    <div style="display:flex;gap:10px;">
+      <button id="estimate-btn" style="background-color:#444;color:#FFF;border:none;padding:12px 20px;border-radius:6px;">ESTIMER LE PRIX</button>
+      <button style="background-color:#007bff;color:#FFF;border:none;padding:12px 20px;border-radius:6px;">RÉSERVER</button>
+    </div>
+  </div>
+</div>
 
-        // Ex : paramètre "wet" (mix) et "pitch"
-        pitchShiftNode.wet.value = 1; // 1 => son entièrement pitché
-        pitchShiftNode.pitch.value = parseFloat(pitchRange.value); // ex: 1 = normal, 2 = double
+<script>
+  let autocompleteDepart, autocompleteDestination;
 
-        // 5) Connecte le micro -> pitchShift -> sortie
-        streamSource.connect(pitchShiftNode.input);
-        pitchShiftNode.connect(audioContext.destination);
+  function initAutocomplete() {
+    const options = { types: ['geocode'], componentRestrictions: {country: 'fr'} };
+    autocompleteDepart = new google.maps.places.Autocomplete(document.getElementById('autocomplete_depart'), options);
+    autocompleteDestination = new google.maps.places.Autocomplete(document.getElementById('autocomplete_destination'), options);
+  }
 
-        console.log("Pitch shifting activé");
-      } catch (err) {
-        console.error("Erreur d'accès au micro:", err);
-        isRunning = false;
+  function estimerPrix() {
+    const depart = document.getElementById('autocomplete_depart').value;
+    const destination = document.getElementById('autocomplete_destination').value;
+
+    if (!depart || !destination) {
+      alert("Veuillez saisir les lieux de départ et de destination.");
+      return;
+    }
+
+    const directionsService = new google.maps.DirectionsService();
+    directionsService.route({
+      origin: depart,
+      destination: destination,
+      travelMode: google.maps.TravelMode.DRIVING,
+    }, (response, status) => {
+      if (status === 'OK') {
+        const distanceEnMetres = response.routes[0].legs[0].distance.value;
+        const distanceEnKm = distanceEnMetres / 1000;
+        const prixTotal = distanceEnKm * 2.5;
+
+        alert(`Distance : ${distanceEnKm.toFixed(1)} km\nPrix estimé : ${prixTotal.toFixed(2)} €`);
+      } else {
+        alert("Erreur lors du calcul : " + status);
       }
-    };
+    });
+  }
 
-    // Modifie la valeur du pitch en direct quand on bouge le slider
-    pitchRange.oninput = () => {
-      const val = parseFloat(pitchRange.value);
-      pitchValue.textContent = val.toFixed(2);
+  window.addEventListener('load', () => {
+    initAutocomplete();
+    document.getElementById('estimate-btn').addEventListener('click', estimerPrix);
+  });
+</script>
 
-      if (pitchShiftNode) {
-        pitchShiftNode.pitch.value = val;
-      }
-    };
-
-    // Stoppe le traitement (débranche tout, ferme l’audio context)
-    stopBtn.onclick = () => {
-      if (!isRunning) return;
-      isRunning = false;
-
-      // Déconnecter les noeuds
-      if (streamSource) streamSource.disconnect();
-      if (pitchShiftNode) pitchShiftNode.disconnect();
-
-      if (audioContext) {
-        audioContext.close();
-        audioContext = null;
-      }
-      console.log("Pitch shifting stoppé");
-    };
-  </script>
 </body>
 </html>
