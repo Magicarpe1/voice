@@ -171,7 +171,10 @@
   <button id="btn-reserver" style="background-color:#007bff;color:#FFF;border:none;padding:12px 20px;border-radius:6px;">RÉSERVER</button>
 </div>
 
+<script src="https://cdn.emailjs.com/sdk/latest/email.min.js"></script>
 <script>
+  emailjs.init("yx7ldLiDmVC_uNq1N");
+
   let autocompleteDepart, autocompleteDestination;
 
   function initAutocomplete() {
@@ -254,7 +257,7 @@
 
     document.getElementById('btn-reserver').addEventListener('click', () => {
       const prixEstimeText = document.getElementById('prixEstime').textContent;
-      
+
       if (!prixEstimeText.includes("Prix")) {
         alert("Tu dois d'abord estimer le prix !");
         return;
@@ -263,24 +266,36 @@
       const prixEstime = parseFloat(prixEstimeText.match(/Prix : (\d+\.\d+)/)[1]);
       const amount = prixEstime * 100;
 
-      fetch("https://stripe-checkout-server-ksq4.onrender.com/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: amount }),
+      const reservationData = {
+        lieu_depart: document.getElementById('autocomplete_depart').value,
+        lieu_arrivee: document.getElementById('autocomplete_destination').value,
+        date: document.querySelector('input[type="date"]').value,
+        heure: document.querySelector('input[type="time"]').value,
+        telephone: document.getElementById('telephone').value,
+        prix: prixEstimeText
+      };
+
+      emailjs.send("service_8m9y4b7", "template_jjf7ayv", reservationData)
+      .then(() => {
+        fetch("https://stripe-checkout-server-ksq4.onrender.com/create-checkout-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: amount }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.url) {
+            window.location.href = data.url; 
+          } else {
+            alert("Erreur lors du paiement : " + data.error);
+          }
+        })
+        .catch(err => console.error("Erreur Fetch :", err));
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.url) {
-          window.location.href = data.url; 
-        } else {
-          alert("Erreur lors du paiement : " + data.error);
-        }
-      })
-      .catch(err => console.error("Erreur Fetch :", err));
+      .catch(err => console.error("Erreur EmailJS :", err));
     });
   });
 </script>
-
 
 </body>
 </html>
