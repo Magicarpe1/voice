@@ -135,9 +135,11 @@
   function estimerPrix() {
     const depart = document.getElementById('autocomplete_depart').value;
     const destination = document.getElementById('autocomplete_destination').value;
+    const prixEstime = document.getElementById('prixEstime');
 
     if (!depart || !destination) {
-      alert("Veuillez saisir les lieux de départ et de destination.");
+      prixEstime.textContent = "Veuillez saisir les lieux de départ et de destination.";
+      prixEstime.style.display = "block";
       return;
     }
 
@@ -147,20 +149,18 @@
       destination: destination,
       travelMode: google.maps.TravelMode.DRIVING,
     }, (response, status) => {
-      const prixEstime = document.getElementById('prixEstime');
-
       if (status === 'OK') {
         const distanceEnMetres = response.routes[0].legs[0].distance.value;
         const distanceEnKm = distanceEnMetres / 1000;
         
         let prixTotal;
         if (distanceEnKm < 4) {
-          prixTotal = 10;  // Tarif minimum pour distances inférieures à 4 km
+          prixTotal = 10;
         } else {
-          prixTotal = distanceEnKm * 2.5;  // Tarif normal à 2,5 €/km
+          prixTotal = distanceEnKm * 2.5;
         }
 
-        prixEstime.textContent = `Prix : ${prixTotal.toFixed(2)} €`;
+        prixEstime.textContent = `Distance : ${distanceEnKm.toFixed(1)} km | Prix : ${prixTotal.toFixed(2)} €`;
         prixEstime.style.display = "block";
 
       } else {
