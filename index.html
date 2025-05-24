@@ -70,10 +70,16 @@
       font-size: 12px;
       padding: 6px;
       text-align: center;
+      background-color: #262626;
+      color: #FFF;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
     }
-
+    
     .preset-btn:hover {
-      background-color:#333;
+      background-color: #333;
     }
 
   </style>
@@ -114,11 +120,11 @@
       <input id="autocomplete_destination" placeholder="Entrez votre destination" type="text">
 
 <div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;">
-  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="18 Rue de Dunkerque, 75010 Paris">Gare du Nord</button>
-  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="17 Boulevard de Vaugirard, 75015 Paris">Montparnasse</button>
-  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Place Louis-Armand, 75012 Paris">Gare de Lyon</button>
-  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Aéroport Charles de Gaulle, Roissy-en-France">CDG</button>
-  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Aéroport d'Orly, 94390 Orly">Orly</button>
+  <button class="preset-btn" data-input="autocomplete_destination" data-adresse="18 Rue de Dunkerque, 75010 Paris">Gare du Nord</button>
+  <button class="preset-btn" data-input="autocomplete_destination" data-adresse="17 Boulevard de Vaugirard, 75015 Paris">Montparnasse</button>
+  <button class="preset-btn" data-input="autocomplete_destination" data-adresse="Place Louis-Armand, 75012 Paris">Gare de Lyon</button>
+  <button class="preset-btn" data-input="autocomplete_destination" data-adresse="Aéroport Charles de Gaulle, Roissy-en-France">CDG</button>
+  <button class="preset-btn" data-input="autocomplete_destination" data-adresse="Aéroport d'Orly, 94390 Orly">Orly</button>
 </div>
 
 
