@@ -171,9 +171,13 @@
   <button id="btn-reserver" style="background-color:#007bff;color:#FFF;border:none;padding:12px 20px;border-radius:6px;">RÉSERVER</button>
 </div>
 
+<!-- Chargement d'EmailJS -->
 <script src="https://cdn.emailjs.com/sdk/latest/email.min.js"></script>
+
 <script>
+  // Déclaration des variables globales
   let autocompleteDepart, autocompleteDestination;
+  let nombrePersonnes = 1;
 
   function initAutocomplete() {
     const options = { types: ['geocode'], componentRestrictions: { country: 'fr' } };
@@ -202,12 +206,7 @@
         const distanceEnMetres = response.routes[0].legs[0].distance.value;
         const distanceEnKm = distanceEnMetres / 1000;
 
-        let prixTotal;
-        if (distanceEnKm < 4) {
-          prixTotal = 10;
-        } else {
-          prixTotal = distanceEnKm * 2.5;
-        }
+        let prixTotal = distanceEnKm < 4 ? 10 : distanceEnKm * 2.5;
 
         prixEstime.textContent = `Distance : ${distanceEnKm.toFixed(1)} km | Prix : ${prixTotal.toFixed(2)} €`;
         prixEstime.style.display = "block";
@@ -218,12 +217,15 @@
     });
   }
 
-  window.addEventListener('load', () => {
+  // Initialisation générale propre
+  window.addEventListener('DOMContentLoaded', () => {
     emailjs.init("yx7ldLiDmVC_uNq1N");
     initAutocomplete();
 
+    // Bouton estimation
     document.getElementById('estimate-btn').addEventListener('click', estimerPrix);
 
+    // Boutons presets (gares et aéroports)
     document.querySelectorAll('.preset-btn').forEach(btn => {
       btn.addEventListener('click', (event) => {
         const adresse = event.currentTarget.getAttribute('data-adresse');
@@ -232,31 +234,27 @@
       });
     });
 
-    let nombrePersonnes = 1;
-    const minPersonnes = 1;
-    const maxPersonnes = 9;
-
+    // Gestion du nombre de personnes
     const affichagePersonnes = document.getElementById('nombre-personnes');
     const btnMoins = document.getElementById('btn-moins');
     const btnPlus = document.getElementById('btn-plus');
 
     btnMoins.addEventListener('click', () => {
-      if (nombrePersonnes > minPersonnes) {
-        nombrePersonnes--;
-        affichagePersonnes.textContent = nombrePersonnes;
+      if (nombrePersonnes > 1) {
+        affichagePersonnes.textContent = --nombrePersonnes;
       }
     });
 
     btnPlus.addEventListener('click', () => {
-      if (nombrePersonnes < maxPersonnes) {
-        nombrePersonnes++;
-        affichagePersonnes.textContent = nombrePersonnes;
+      if (nombrePersonnes < 9) {
+        affichagePersonnes.textContent = ++nombrePersonnes;
       }
     });
 
+    // Bouton réserver
     document.getElementById('btn-reserver').addEventListener('click', () => {
       const prixEstimeText = document.getElementById('prixEstime').textContent;
-      
+
       if (!prixEstimeText.includes("Prix")) {
         alert("Tu dois d'abord estimer le prix !");
         return;
@@ -275,28 +273,30 @@
         nombre_personnes: nombrePersonnes
       };
 
+      // Envoi via EmailJS puis paiement Stripe
       emailjs.send("service_8m9y4b7", "template_jjf7ayv", reservationData)
       .then(() => {
-        fetch("https://stripe-checkout-server-ksq4.onrender.com/create-checkout-session", {
+        return fetch("https://stripe-checkout-server-ksq4.onrender.com/create-checkout-session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount: amount }),
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.url) {
-            window.location.href = data.url; 
-          } else {
-            alert("Erreur lors du paiement : " + data.error);
-          }
-        })
-        .catch(err => console.error("Erreur Fetch :", err));
+          body: JSON.stringify({ amount }),
+        });
       })
-      .catch(err => console.error("Erreur EmailJS :", err));
+      .then(res => res.json())
+      .then(data => {
+        if (data.url) {
+          window.location.href = data.url; 
+        } else {
+          alert("Erreur lors du paiement : " + data.error);
+        }
+      })
+      .catch(err => {
+        console.error("Erreur générale :", err);
+        alert("Une erreur est survenue. Veuillez réessayer.");
+      });
     });
   });
 </script>
-
 
 </body>
 </html>
