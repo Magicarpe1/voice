@@ -171,13 +171,8 @@
   <button id="btn-reserver" style="background-color:#007bff;color:#FFF;border:none;padding:12px 20px;border-radius:6px;">RÉSERVER</button>
 </div>
 
-<!-- Chargement d'EmailJS -->
-<script src="https://cdn.emailjs.com/sdk/latest/email.min.js"></script>
-
 <script>
-  // Déclaration des variables globales
   let autocompleteDepart, autocompleteDestination;
-  let nombrePersonnes = 1;
 
   function initAutocomplete() {
     const options = { types: ['geocode'], componentRestrictions: { country: 'fr' } };
@@ -206,7 +201,12 @@
         const distanceEnMetres = response.routes[0].legs[0].distance.value;
         const distanceEnKm = distanceEnMetres / 1000;
 
-        let prixTotal = distanceEnKm < 4 ? 10 : distanceEnKm * 2.5;
+        let prixTotal;
+        if (distanceEnKm < 4) {
+          prixTotal = 10;
+        } else {
+          prixTotal = distanceEnKm * 2.5;
+        }
 
         prixEstime.textContent = `Distance : ${distanceEnKm.toFixed(1)} km | Prix : ${prixTotal.toFixed(2)} €`;
         prixEstime.style.display = "block";
@@ -217,15 +217,11 @@
     });
   }
 
-  // Initialisation générale propre
-  window.addEventListener('DOMContentLoaded', () => {
-    emailjs.init("yx7ldLiDmVC_uNq1N");
+  window.addEventListener('load', () => {
     initAutocomplete();
 
-    // Bouton estimation
     document.getElementById('estimate-btn').addEventListener('click', estimerPrix);
 
-    // Boutons presets (gares et aéroports)
     document.querySelectorAll('.preset-btn').forEach(btn => {
       btn.addEventListener('click', (event) => {
         const adresse = event.currentTarget.getAttribute('data-adresse');
@@ -234,27 +230,31 @@
       });
     });
 
-    // Gestion du nombre de personnes
+    let nombrePersonnes = 1;
+    const minPersonnes = 1;
+    const maxPersonnes = 9;
+
     const affichagePersonnes = document.getElementById('nombre-personnes');
     const btnMoins = document.getElementById('btn-moins');
     const btnPlus = document.getElementById('btn-plus');
 
     btnMoins.addEventListener('click', () => {
-      if (nombrePersonnes > 1) {
-        affichagePersonnes.textContent = --nombrePersonnes;
+      if (nombrePersonnes > minPersonnes) {
+        nombrePersonnes--;
+        affichagePersonnes.textContent = nombrePersonnes;
       }
     });
 
     btnPlus.addEventListener('click', () => {
-      if (nombrePersonnes < 9) {
-        affichagePersonnes.textContent = ++nombrePersonnes;
+      if (nombrePersonnes < maxPersonnes) {
+        nombrePersonnes++;
+        affichagePersonnes.textContent = nombrePersonnes;
       }
     });
 
-    // Bouton réserver
     document.getElementById('btn-reserver').addEventListener('click', () => {
       const prixEstimeText = document.getElementById('prixEstime').textContent;
-
+      
       if (!prixEstimeText.includes("Prix")) {
         alert("Tu dois d'abord estimer le prix !");
         return;
@@ -263,24 +263,10 @@
       const prixEstime = parseFloat(prixEstimeText.match(/Prix : (\d+\.\d+)/)[1]);
       const amount = prixEstime * 100;
 
-      const reservationData = {
-        lieu_depart: document.getElementById('autocomplete_depart').value,
-        lieu_arrivee: document.getElementById('autocomplete_destination').value,
-        date: document.querySelector('input[type="date"]').value,
-        heure: document.querySelector('input[type="time"]').value,
-        telephone: document.getElementById('telephone').value,
-        prix: prixEstimeText,
-        nombre_personnes: nombrePersonnes
-      };
-
-      // Envoi via EmailJS puis paiement Stripe
-      emailjs.send("service_8m9y4b7", "template_jjf7ayv", reservationData)
-      .then(() => {
-        return fetch("https://stripe-checkout-server-ksq4.onrender.com/create-checkout-session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount }),
-        });
+      fetch("https://stripe-checkout-server-ksq4.onrender.com/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: amount }),
       })
       .then(res => res.json())
       .then(data => {
@@ -290,13 +276,11 @@
           alert("Erreur lors du paiement : " + data.error);
         }
       })
-      .catch(err => {
-        console.error("Erreur générale :", err);
-        alert("Une erreur est survenue. Veuillez réessayer.");
-      });
+      .catch(err => console.error("Erreur Fetch :", err));
     });
   });
 </script>
+
 
 </body>
 </html>
