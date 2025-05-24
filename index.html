@@ -221,17 +221,21 @@
   }
 
   function verifierFormulaire() {
-    const depart = document.getElementById('autocomplete_depart').value;
-    const destination = document.getElementById('autocomplete_destination').value;
-    const date = document.querySelector('input[type="date"]').value;
-    const heure = document.querySelector('input[type="time"]').value;
-    const telephone = document.getElementById('telephone').value;
-    const prixEstimeText = document.getElementById('prixEstime').textContent;
+  const depart = document.getElementById('autocomplete_depart').value;
+  const destination = document.getElementById('autocomplete_destination').value;
+  const date = document.querySelector('input[type="date"]').value;
+  const heure = document.querySelector('input[type="time"]').value;
+  const telephone = document.getElementById('telephone').value;
+  const prixEstimeText = document.getElementById('prixEstime').textContent;
 
-    const formulaireComplet = depart && destination && date && heure && telephone && prixEstimeText.includes("Prix");
-    document.getElementById('btn-reserver').disabled = !formulaireComplet;
-    document.getElementById('btn-reserver').style.opacity = formulaireComplet ? '1' : '0.5';
-  }
+  const formulaireComplet = depart && destination && date && heure && telephone && prixEstimeText.includes("Prix");
+  const btnReserver = document.getElementById('btn-reserver');
+
+  btnReserver.disabled = !formulaireComplet;
+  btnReserver.style.backgroundColor = formulaireComplet ? '#007bff' : '#888';
+  btnReserver.style.opacity = formulaireComplet ? '1' : '0.6';
+}
+
 
   window.addEventListener('load', () => {
     emailjs.init("yx7ldLiDmVC_uNq1N");
