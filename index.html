@@ -143,16 +143,16 @@
     <div style="color:#AAA;">Passagers : 9</div>
   </div>
 
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:25px;">
-  <div style="display:flex;align-items:center;font-size:16px;gap:8px;">
-    <!-- Icône SVG -->
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="#FFF">
-      <path d="M117.25 157.92a60 60 0 1 0-66.5 0a95.83 95.83 0 0 0-47.22 37.71a8 8 0 1 0 13.4 8.74a80 80 0 0 1 134.14 0a8 8 0 0 0 13.4-8.74a95.83 95.83 0 0 0-47.22-37.71M40 108a44 44 0 1 1 44 44a44.05 44.05 0 0 1-44-44m210.14 98.7a8 8 0 0 1-11.07-2.33A79.83 79.83 0 0 0 172 168a8 8 0 0 1 0-16a44 44 0 1 0-16.34-84.87a8 8 0 1 1-5.94-14.85a60 60 0 0 1 55.53 105.64a95.83 95.83 0 0 1 47.22 37.71a8 8 0 0 1-2.33 11.07"/>
-    </svg>
-    <button style="margin:0 10px;width:30px;height:30px;border-radius:50%;border:none;background:#262626;color:#FFF;">–</button>
-    <span>1</span>
-    <button style="margin:0 10px;width:30px;height:30px;border-radius:50%;border:none;background:#262626;color:#FFF;">+</button>
-  </div>
+ <div style="display:flex;align-items:center;font-size:16px;gap:8px;">
+  <!-- Icône SVG -->
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="#FFF">
+    <path d="M117.25 157.92a60 60 0 1 0-66.5 0a95.83 95.83 0 0 0-47.22 37.71a8 8 0 1 0 13.4 8.74a80 80 0 0 1 134.14 0a8 8 0 0 0 13.4-8.74a95.83 95.83 0 0 0-47.22-37.71M40 108a44 44 0 1 1 44 44a44.05 44.05 0 0 1-44-44m210.14 98.7a8 8 0 0 1-11.07-2.33A79.83 79.83 0 0 0 172 168a8 8 0 0 1 0-16a44 44 0 1 0-16.34-84.87a8 8 0 1 1-5.94-14.85a60 60 0 0 1 55.53 105.64a95.83 95.83 0 0 1 47.22 37.71a8 8 0 0 1-2.33 11.07"/>
+  </svg>
+  <button id="btn-moins" style="margin:0 10px;width:30px;height:30px;border-radius:50%;border:none;background:#262626;color:#FFF;">–</button>
+  <span id="nombre-personnes">1</span>
+  <button id="btn-plus" style="margin:0 10px;width:30px;height:30px;border-radius:50%;border:none;background:#262626;color:#FFF;">+</button>
+</div>
+
 
   <div style="display:flex;align-items:center;gap:10px;">
     <div id="prixEstime" style="color:#FFF;font-weight:bold;background-color:#262626;padding:10px 15px;border-radius:6px;display:none;"></div>
@@ -165,7 +165,7 @@
   let autocompleteDepart, autocompleteDestination;
 
   function initAutocomplete() {
-    const options = { types: ['geocode'], componentRestrictions: {country: 'fr'} };
+    const options = { types: ['geocode'], componentRestrictions: { country: 'fr' } };
     autocompleteDepart = new google.maps.places.Autocomplete(document.getElementById('autocomplete_depart'), options);
     autocompleteDestination = new google.maps.places.Autocomplete(document.getElementById('autocomplete_destination'), options);
   }
@@ -190,7 +190,7 @@
       if (status === 'OK') {
         const distanceEnMetres = response.routes[0].legs[0].distance.value;
         const distanceEnKm = distanceEnMetres / 1000;
-        
+
         let prixTotal;
         if (distanceEnKm < 4) {
           prixTotal = 10;
@@ -200,7 +200,6 @@
 
         prixEstime.textContent = `Distance : ${distanceEnKm.toFixed(1)} km | Prix : ${prixTotal.toFixed(2)} €`;
         prixEstime.style.display = "block";
-
       } else {
         prixEstime.textContent = "Erreur lors du calcul";
         prixEstime.style.display = "block";
@@ -210,15 +209,39 @@
 
   window.addEventListener('load', () => {
     initAutocomplete();
+
     document.getElementById('estimate-btn').addEventListener('click', estimerPrix);
 
-    // Ajout des boutons pré-remplis avec sélection dynamique du champ
+    // Boutons pré-remplis avec sélection dynamique du champ
     document.querySelectorAll('.preset-btn').forEach(btn => {
       btn.addEventListener('click', (event) => {
         const adresse = event.currentTarget.getAttribute('data-adresse');
         const inputId = event.currentTarget.getAttribute('data-input');
         document.getElementById(inputId).value = adresse;
       });
+    });
+
+    // Gestion compteur du nombre de personnes
+    let nombrePersonnes = 1;
+    const minPersonnes = 1;
+    const maxPersonnes = 9;
+
+    const affichagePersonnes = document.getElementById('nombre-personnes');
+    const btnMoins = document.getElementById('btn-moins');
+    const btnPlus = document.getElementById('btn-plus');
+
+    btnMoins.addEventListener('click', () => {
+      if (nombrePersonnes > minPersonnes) {
+        nombrePersonnes--;
+        affichagePersonnes.textContent = nombrePersonnes;
+      }
+    });
+
+    btnPlus.addEventListener('click', () => {
+      if (nombrePersonnes < maxPersonnes) {
+        nombrePersonnes++;
+        affichagePersonnes.textContent = nombrePersonnes;
+      }
     });
   });
 </script>
