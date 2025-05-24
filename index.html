@@ -168,7 +168,6 @@
  <!-- Prix estimé et boutons -->
 <div style="display:flex;align-items:center;gap:10px;">
   <div id="prixEstime" style="color:#FFF;font-weight:bold;background-color:#262626;padding:10px 15px;border-radius:6px;display:none;"></div>
-  <button id="estimate-btn" style="background-color:#444;color:#FFF;border:none;padding:12px 20px;border-radius:6px;">ESTIMER LE PRIX</button>
   <button id="btn-reserver" disabled style="background-color:#777;color:#CCC;border:none;padding:12px 20px;border-radius:6px;">RÉSERVER</button>
 </div>
 
@@ -237,24 +236,62 @@
   btnReserver.style.opacity = formulaireComplet ? '1' : '0.6';
 }
 
+function estimerPrix() {
+  const depart = document.getElementById('autocomplete_depart').value.trim();
+  const destination = document.getElementById('autocomplete_destination').value.trim();
+  const prixEstime = document.getElementById('prixEstime');
+
+  if (!depart || !destination) {
+    prixEstime.style.display = "none";
+    verifierFormulaire();
+    return;
+  }
+
+  const directionsService = new google.maps.DirectionsService();
+  directionsService.route({
+    origin: depart,
+    destination: destination,
+    travelMode: google.maps.TravelMode.DRIVING,
+  }, (response, status) => {
+    if (status === 'OK') {
+      const distanceEnMetres = response.routes[0].legs[0].distance.value;
+      const distanceEnKm = distanceEnMetres / 1000;
+
+      let prixTotal = distanceEnKm < 4 ? 10 : distanceEnKm * 2.5;
+
+      prixEstime.textContent = `Distance : ${distanceEnKm.toFixed(1)} km | Prix : ${prixTotal.toFixed(2)} €`;
+      prixEstime.style.display = "block";
+    } else {
+      prixEstime.textContent = "Erreur lors du calcul";
+      prixEstime.style.display = "block";
+    }
+    verifierFormulaire();
+  });
+}
+
 window.addEventListener('load', () => {
   emailjs.init("yx7ldLiDmVC_uNq1N");
   initAutocomplete();
 
-  const verifierInputs = ['autocomplete_depart', 'autocomplete_destination', 'telephone'];
+  const estimationInputs = ['autocomplete_depart', 'autocomplete_destination'];
+  estimationInputs.forEach(id => {
+    document.getElementById(id).addEventListener('input', estimerPrix);
+  });
+
+  const verifierInputs = [...estimationInputs, 'telephone'];
   verifierInputs.forEach(id => {
     document.getElementById(id).addEventListener('input', verifierFormulaire);
   });
 
   document.querySelector('input[type="date"]').addEventListener('change', verifierFormulaire);
   document.querySelector('input[type="time"]').addEventListener('change', verifierFormulaire);
-  document.getElementById('estimate-btn').addEventListener('click', estimerPrix);
 
   document.querySelectorAll('.preset-btn').forEach(btn => {
     btn.addEventListener('click', (event) => {
       const adresse = event.currentTarget.getAttribute('data-adresse');
       const inputId = event.currentTarget.getAttribute('data-input');
       document.getElementById(inputId).value = adresse;
+      estimerPrix();
       verifierFormulaire();
     });
   });
@@ -292,13 +329,11 @@ window.addEventListener('load', () => {
     };
 
     emailjs.send("service_8m9y4b7", "template_jjf7ayv", reservationData)
-      .then(() => {
-        return fetch("https://stripe-checkout-server-ksq4.onrender.com/create-checkout-session", {
+      .then(() => fetch("https://stripe-checkout-server-ksq4.onrender.com/create-checkout-session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ amount }),
-        });
-      })
+        }))
       .then(res => res.json())
       .then(data => {
         if (data.url) {
@@ -313,7 +348,7 @@ window.addEventListener('load', () => {
       });
   });
 
-  verifierFormulaire(); // Vérification initiale à l'ouverture
+  verifierFormulaire();  // vérification initiale
 });
 </script>
 
