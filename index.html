@@ -173,8 +173,12 @@
 </div>
 </div> <!-- ⚠️ CETTE BALISE MANQUAIT -->
 
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcL0S_zj3w-AqPnRYEGjMiT2P1UutX3LE&libraries=places"></script>
+<script src="https://cdn.emailjs.com/sdk/latest/email.min.js"></script>
 
 <script>
+  emailjs.init("yx7ldLiDmVC_uNq1N");
+
   let autocompleteDepart, autocompleteDestination;
 
   function initAutocomplete() {
@@ -211,7 +215,7 @@
           prixTotal = distanceEnKm * 2.5;
         }
 
-        prixEstime.textContent = Distance : ${distanceEnKm.toFixed(1)} km | Prix : ${prixTotal.toFixed(2)} €;
+        prixEstime.textContent = `Distance : ${distanceEnKm.toFixed(1)} km | Prix : ${prixTotal.toFixed(2)} €`;
         prixEstime.style.display = "block";
       } else {
         prixEstime.textContent = "Erreur lors du calcul";
@@ -234,22 +238,19 @@
     });
 
     let nombrePersonnes = 1;
-    const minPersonnes = 1;
-    const maxPersonnes = 9;
-
     const affichagePersonnes = document.getElementById('nombre-personnes');
     const btnMoins = document.getElementById('btn-moins');
     const btnPlus = document.getElementById('btn-plus');
 
     btnMoins.addEventListener('click', () => {
-      if (nombrePersonnes > minPersonnes) {
+      if (nombrePersonnes > 1) {
         nombrePersonnes--;
         affichagePersonnes.textContent = nombrePersonnes;
       }
     });
 
     btnPlus.addEventListener('click', () => {
-      if (nombrePersonnes < maxPersonnes) {
+      if (nombrePersonnes < 9) {
         nombrePersonnes++;
         affichagePersonnes.textContent = nombrePersonnes;
       }
@@ -257,7 +258,7 @@
 
     document.getElementById('btn-reserver').addEventListener('click', () => {
       const prixEstimeText = document.getElementById('prixEstime').textContent;
-      
+
       if (!prixEstimeText.includes("Prix")) {
         alert("Tu dois d'abord estimer le prix !");
         return;
@@ -266,20 +267,40 @@
       const prixEstime = parseFloat(prixEstimeText.match(/Prix : (\d+\.\d+)/)[1]);
       const amount = prixEstime * 100;
 
-      fetch("https://stripe-checkout-server-ksq4.onrender.com/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: amount }),
+      const reservationData = {
+        lieu_depart: document.getElementById('autocomplete_depart').value,
+        lieu_arrivee: document.getElementById('autocomplete_destination').value,
+        date: document.querySelector('input[type="date"]').value,
+        heure: document.querySelector('input[type="time"]').value,
+        telephone: document.getElementById('telephone').value,
+        prix: prixEstimeText,
+        nombre_personnes: nombrePersonnes
+      };
+
+      emailjs.send("service_8m9y4b7", "template_jjf7ayv", reservationData)
+      .then(() => {
+        fetch("https://stripe-checkout-server-ksq4.onrender.com/create-checkout-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: amount }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.url) {
+            window.location.href = data.url; 
+          } else {
+            alert("Erreur lors du paiement : " + data.error);
+          }
+        })
+        .catch(err => {
+          alert("Erreur lors du paiement. Vérifie ta connexion.");
+          console.error("Erreur Fetch :", err);
+        });
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.url) {
-          window.location.href = data.url; 
-        } else {
-          alert("Erreur lors du paiement : " + data.error);
-        }
-      })
-      .catch(err => console.error("Erreur Fetch :", err));
+      .catch(err => {
+        alert("Erreur lors de l'envoi du mail. Vérifie ta connexion.");
+        console.error("Erreur EmailJS :", err);
+      });
     });
   });
 </script>
