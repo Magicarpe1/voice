@@ -222,7 +222,6 @@
 
     document.getElementById('estimate-btn').addEventListener('click', estimerPrix);
 
-    // Boutons pré-remplis avec sélection dynamique du champ
     document.querySelectorAll('.preset-btn').forEach(btn => {
       btn.addEventListener('click', (event) => {
         const adresse = event.currentTarget.getAttribute('data-adresse');
@@ -231,7 +230,6 @@
       });
     });
 
-    // Gestion compteur du nombre de personnes
     let nombrePersonnes = 1;
     const minPersonnes = 1;
     const maxPersonnes = 9;
@@ -254,7 +252,6 @@
       }
     });
 
-    // Redirection Stripe Checkout
     document.getElementById('btn-reserver').addEventListener('click', () => {
       const prixEstimeText = document.getElementById('prixEstime').textContent;
       
@@ -264,9 +261,9 @@
       }
 
       const prixEstime = parseFloat(prixEstimeText.match(/Prix : (\d+\.\d+)/)[1]);
-      const amount = prixEstime * 100; // Converti en centimes
+      const amount = prixEstime * 100;
 
-      fetch("http://localhost:3000/create-checkout-session", {
+      fetch("https://stripe-checkout-server-ksq4.onrender.com/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: amount }),
