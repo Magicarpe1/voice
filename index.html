@@ -144,23 +144,25 @@
   </div>
 
  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:25px;">
- <div style="display:flex;align-items:center;font-size:16px;gap:8px;">
-  <!-- Icône SVG -->
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="#FFF">
-    <path d="M117.25 157.92a60 60 0 1 0-66.5 0a95.83 95.83 0 0 0-47.22 37.71a8 8 0 1 0 13.4 8.74a80 80 0 0 1 134.14 0a8 8 0 0 0 13.4-8.74a95.83 95.83 0 0 0-47.22-37.71M40 108a44 44 0 1 1 44 44a44.05 44.05 0 0 1-44-44m210.14 98.7a8 8 0 0 1-11.07-2.33A79.83 79.83 0 0 0 172 168a8 8 0 0 1 0-16a44 44 0 1 0-16.34-84.87a8 8 0 1 1-5.94-14.85a60 60 0 0 1 55.53 105.64a95.83 95.83 0 0 1 47.22 37.71a8 8 0 0 1-2.33 11.07"/>
-  </svg>
-  <button id="btn-moins" style="margin:0 10px;width:30px;height:30px;border-radius:50%;border:none;background:#262626;color:#FFF;">–</button>
-  <span id="nombre-personnes">1</span>
-  <button id="btn-plus" style="margin:0 10px;width:30px;height:30px;border-radius:50%;border:none;background:#262626;color:#FFF;">+</button>
-</div>
+  
+  <div style="display:flex;align-items:center;font-size:16px;gap:8px;">
+    <!-- Icône SVG -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="#FFF">
+      <path d="M117.25 157.92a60 60 0 1 0-66.5 0a95.83 95.83 0 0 0-47.22 37.71a8 8 0 1 0 13.4 8.74a80 80 0 0 1 134.14 0a8 8 0 0 0 13.4-8.74a95.83 95.83 0 0 0-47.22-37.71M40 108a44 44 0 1 1 44 44a44.05 44.05 0 0 1-44-44m210.14 98.7a8 8 0 0 1-11.07-2.33A79.83 79.83 0 0 0 172 168a8 8 0 0 1 0-16a44 44 0 1 0-16.34-84.87a8 8 0 1 1-5.94-14.85a60 60 0 0 1 55.53 105.64a95.83 95.83 0 0 1 47.22 37.71a8 8 0 0 1-2.33 11.07"/>
+    </svg>
+    <button id="btn-moins" style="margin:0 10px;width:30px;height:30px;border-radius:50%;border:none;background:#262626;color:#FFF;">–</button>
+    <span id="nombre-personnes">1</span>
+    <button id="btn-plus" style="margin:0 10px;width:30px;height:30px;border-radius:50%;border:none;background:#262626;color:#FFF;">+</button>
+  </div>
 
-
-  <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
+  <div style="display:flex;align-items:center;gap:10px;">
     <div id="prixEstime" style="color:#FFF;font-weight:bold;background-color:#262626;padding:10px 15px;border-radius:6px;display:none;"></div>
     <button id="estimate-btn" style="background-color:#444;color:#FFF;border:none;padding:12px 20px;border-radius:6px;">ESTIMER LE PRIX</button>
     <button style="background-color:#007bff;color:#FFF;border:none;padding:12px 20px;border-radius:6px;">RÉSERVER</button>
   </div>
+
 </div>
+
 
 <script>
   let autocompleteDepart, autocompleteDestination;
