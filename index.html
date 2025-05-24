@@ -173,7 +173,6 @@
 
 <script src="https://cdn.emailjs.com/sdk/latest/email.min.js"></script>
 <script>
-  emailjs.init("yx7ldLiDmVC_uNq1N");
 
   let autocompleteDepart, autocompleteDestination;
 
@@ -221,6 +220,7 @@
   }
 
   window.addEventListener('load', () => {
+    emailjs.init("yx7ldLiDmVC_uNq1N");
     initAutocomplete();
 
     document.getElementById('estimate-btn').addEventListener('click', estimerPrix);
