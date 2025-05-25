@@ -94,47 +94,46 @@
   </div>
 
   <div style="display:flex;gap:30px;">
-    <div style="flex:1;">
-      <label class="label-with-icon">
-        Lieu de départ
-      </label>
-      <input id="autocomplete_depart" placeholder="Entrez votre lieu de départ" type="text">
+  <div style="flex:1;">
+    <label class="label-with-icon">
+      Lieu de départ
+    </label>
+    <input id="autocomplete_depart" placeholder="Entrez votre lieu de départ" type="text">
 
-<div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;">
-  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="18 Rue de Dunkerque, 75010 Paris">Gare du Nord</button>
-  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="17 Boulevard de Vaugirard, 75015 Paris">Montparnasse</button>
-  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Place Louis-Armand, 75012 Paris">Gare de Lyon</button>
-  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Aéroport Charles de Gaulle, Roissy-en-France">CDG</button>
-  <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Aéroport d'Orly, 94390 Orly">Orly</button>
-</div>
-
-      <label style="display:block;margin-top:20px;">
-        Date
-      </label>
-      <input type="date" placeholder="Date">
+    <div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;">
+      <button class="preset-btn" data-input="autocomplete_depart" data-adresse="18 Rue de Dunkerque, 75010 Paris">Gare du Nord</button>
+      <button class="preset-btn" data-input="autocomplete_depart" data-adresse="17 Boulevard de Vaugirard, 75015 Paris">Montparnasse</button>
+      <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Place Louis-Armand, 75012 Paris">Gare de Lyon</button>
+      <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Aéroport Charles de Gaulle, Roissy-en-France">CDG</button>
+      <button class="preset-btn" data-input="autocomplete_depart" data-adresse="Aéroport d'Orly, 94390 Orly">Orly</button>
     </div>
 
-    <div style="flex:1;">
-      <label class="label-with-icon">
-        Destination
-      </label>
-      <input id="autocomplete_destination" placeholder="Entrez votre destination" type="text">
-
-<div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;">
-  <button class="preset-btn" data-input="autocomplete_destination" data-adresse="18 Rue de Dunkerque, 75010 Paris">Gare du Nord</button>
-  <button class="preset-btn" data-input="autocomplete_destination" data-adresse="17 Boulevard de Vaugirard, 75015 Paris">Montparnasse</button>
-  <button class="preset-btn" data-input="autocomplete_destination" data-adresse="Place Louis-Armand, 75012 Paris">Gare de Lyon</button>
-  <button class="preset-btn" data-input="autocomplete_destination" data-adresse="Aéroport Charles de Gaulle, Roissy-en-France">CDG</button>
-  <button class="preset-btn" data-input="autocomplete_destination" data-adresse="Aéroport d'Orly, 94390 Orly">Orly</button>
-</div>
-
-
-      <label style="display:block;margin-top:20px;" class="label-with-icon">
-        Heure
-      </label>
-      <input type="time" placeholder="Heure">
-    </div>
+    <label style="display:block;margin-top:20px;">
+      Date
+      <input type="date" onclick="this.showPicker()" placeholder="Date">
+    </label>
   </div>
+
+  <div style="flex:1;">
+    <label class="label-with-icon">
+      Destination
+    </label>
+    <input id="autocomplete_destination" placeholder="Entrez votre destination" type="text">
+
+    <div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;">
+      <button class="preset-btn" data-input="autocomplete_destination" data-adresse="18 Rue de Dunkerque, 75010 Paris">Gare du Nord</button>
+      <button class="preset-btn" data-input="autocomplete_destination" data-adresse="17 Boulevard de Vaugirard, 75015 Paris">Montparnasse</button>
+      <button class="preset-btn" data-input="autocomplete_destination" data-adresse="Place Louis-Armand, 75012 Paris">Gare de Lyon</button>
+      <button class="preset-btn" data-input="autocomplete_destination" data-adresse="Aéroport Charles de Gaulle, Roissy-en-France">CDG</button>
+      <button class="preset-btn" data-input="autocomplete_destination" data-adresse="Aéroport d'Orly, 94390 Orly">Orly</button>
+    </div>
+
+    <label style="display:block;margin-top:20px;" class="label-with-icon">
+      Heure
+      <input type="time" onclick="this.showPicker()" placeholder="Heure">
+    </label>
+  </div>
+</div>
 
   <div style="background-color:#262626;border-radius:12px;padding:25px;text-align:center;margin-top:25px;">
     <img src="https://ik.imagekit.io/lakolo/eyJidWNrZXQiOiJkYXRhay1jZG4teHkiLCJlZGl0cyI6e30sImtleSI6ImNvbmZpZ3VyYXRvci1pbWdzL2NhcnMvZnIvODAwL1RPWU9UQS9QUk9BQ0UtVkVSU08tRUxFQ1RSSUMvNDg3NThfTU9OT1NQQUNFLTUtUE9SVEVTL25vaXItcGVybGEtbmVyYS1tZXRhbGxpc2UucG5nIn0=.png?updatedAt=1746260324316"
